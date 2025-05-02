@@ -35,17 +35,61 @@ class Player(GameSprits):
 
 player = Player('Ракетка.png', 10, 250, 20, 100, 6)
 player2 = Player('Ракетка.png', 670, 250, 20, 100, 6)
+krug = GameSprits('Мяч.png',250, 200, 100, 100, 3)
 
+font.init()
+font1 = font.SysFont('Arial', 24)
+
+player1_win = font1.render(
+'',1, (255,0,0))
+
+player2_win = font1.render(
+'',1, (0,255,0))
+
+speed_x = 3
+speed_y = 3
+
+start_x = 5
+start_y = 5
+finish = False
 game = True
 while game:
     for e in event.get():
         if e.type == QUIT:
             game = False
-    window.blit(background, (0,0))
-    player.update_r()
-    player.reset()
-    player2.update_l()
-    player2.reset()
+    
+    if not finish:
+        if sprite.collide_rect(player, krug) or sprite.collide_rect(player2, krug):
+            speed_x *= -1 
+        krug.rect.x += speed_x
+        krug.rect.y += speed_y
+        
+        if krug.rect.y < 5:
+            speed_y *= -1
+        
+        if krug.rect.y > 480:
+            speed_y *= -1
+        
+        if krug.rect.x > 650:
+            player2_win = font1.render(
+                    'Игрок 1 выйграл', 1 ,(255,255,255)
+                )
+            finish = True
+        
+        if krug.rect.x < -70:
+            player1_win = font1.render(
+                    'Игрок 2 выйграл', 1 ,(255,255,255)
+                )
+            finish = True
+        
+        window.blit(background, (0,0))
+        player.update_r()
+        player.reset()
+        player2.update_l()
+        player2.reset()
+        krug.reset()
+        window.blit(player2_win,(250,250))
+        window.blit(player1_win,(250,250))
 
-    clock.tick(FPS)
-    display.update()
+        clock.tick(FPS)
+        display.update()
